@@ -26,4 +26,12 @@ class Game
     end
     game[:home_goals] - game[:away_goals]
   end
+
+  def percentage_home_wins
+    counter = 0
+    @game_stats.each do |game|
+      counter += 1 if game[:outcome].include?("home")
+    end
+    ((counter.to_f / @game_stats.count) * 100).round(2)
+  end
 end

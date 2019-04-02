@@ -37,4 +37,8 @@ class GameTest < Minitest::Test
   def test_it_returns_biggest_blowout
     assert_equal 5, @game.biggest_blowout
   end
+
+  def test_it_returns_percentage_home_wins
+    assert_equal 66.67, @game.percentage_home_wins
+  end
 end
