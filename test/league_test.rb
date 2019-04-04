@@ -39,14 +39,32 @@ class LeagueTest < Minitest::Test
   def test_it_returns_team_name_with_worst_offense
     assert_equal "Sabres", @league.worst_offense
   end
+
+  def test_it_returns_team_name_with_best_defense
+    assert_equal "Kings", @league.best_defense
+  end
+
+  def test_it_returns_team_name_with_worst_defense
+    assert_equal "Coyotes", @league.worst_defense
+  end
+
+  def test_it_returns_team_name_with_highest_scoring_visitor
+    assert_equal "Capitals", @league.highest_scoring_visitor
+  end
+
+  def test_it_returns_team_name_with_highest_scoring_home_team
+    assert_equal "Golden Knights", @league.highest_scoring_home_team
+  end
+
+  def test_it_returns_team_name_with_lowest_scoring_visitor
+    assert_equal "Sabres", @league.lowest_scoring_visitor
+  end
+
+  def test_it_returns_team_name_with_lowest_scoring_home_team
+    assert_equal "Sabres", @league.lowest_scoring_home_team
+  end
 end
 
-# best_defense	Name of the team with the lowest average number of goals allowed per game across all seasons.	String
-# worst_defense	Name of the team with the highest average number of goals allowed per game across all seasons.	String
-# highest_scoring_visitor	Name of the team with the highest average score per game across all seasons when they are away.	String
-# highest_scoring_home_team	Name of the team with the highest average score per game across all seasons when they are home.	String
-# lowest_scoring_visitor	Name of the team with the lowest average score per game across all seasons when they are a visitor.	String
-# lowest_scoring_home_team	Name of the team with the lowest average score per game across all seasons when they are at home.	String
 # winningest_team	Name of the team with the highest win percentage across all seasons.	String
 # best_fans	Name of the team with biggest difference between home and away win percentages.	String
 # worst_fans	List of names of all teams with better away records than home records.	Array
