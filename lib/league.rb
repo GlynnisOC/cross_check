@@ -145,5 +145,53 @@ class League
       team[:team_id] == team_id
     end[:teamname]
   end
+
+  def winningest_team
+    result = {}
+    @game_teams_stats.each do |game|
+      team_id = game[:team_id]
+      result[team_id] = {wins: 0, total_games: 0} unless result[team_id]
+      result[team_id][:total_games]+=1
+      result[team_id][:wins]+=1 if game[:won].include?("TRUE")
+    end
+    team_id = result.max_by do |team_id, stats|
+      (stats[:wins]/stats[:total_games].to_f).round(2)
+    end.first
+    @team_stats.find do |team|
+      team[:team_id] == team_id
+    end[:teamname]
+  end
+
+  def best_fans
+    result = {}
+    @game_teams_stats.each do |game|
+      team_id = game[:team_id]
+      result[team_id] = {home: 0, home_wins: 0, away: 0, away_wins: 0} unless result[team_id]
+      result[team_id][game[:hoa].to_sym] += 1
+      result[team_id][:home_wins] += 1 if game[:hoa].include? "home" and game[:won].include? "TRUE"
+      result[team_id][:away_wins] += 1 if game[:hoa].include? "away" and game[:won].include? "TRUE"
+    end
+    team_id = result.max_by do |team, stats|
+      stats[:home_wins]/stats[:home].to_f - stats[:away_wins]/stats[:away].to_f
+    end.first
+    @team_stats.find do |team|
+      team[:team_id] == team_id
+    end[:teamname]
+  end
+
+  def worst_fans
+    result = {}
+    @game_teams_stats.each do |game|
+      team_id = game[:team_id]
+      result[team_id] = {home: 0, home_wins: 0, away: 0, away_wins: 0} unless result[team_id]
+      result[team_id][game[:hoa].to_sym] += 1
+      result[team_id][:home_wins] += 1 if game[:hoa].include? "home" and game[:won].include? "TRUE"
+      result[team_id][:away_wins] += 1 if game[:hoa].include? "away" and game[:won].include? "TRUE"
+    end
+    team_id = result.find_all do |team, stats|
+      stats[:home_wins]/stats[:home].to_f - stats[:away_wins]/stats[:away].to_f
+    end
+  end
+
 end
-# require 'pry';binding.pry
+# require 'pry'; binding.pry

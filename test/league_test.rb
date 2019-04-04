@@ -63,8 +63,18 @@ class LeagueTest < Minitest::Test
   def test_it_returns_team_name_with_lowest_scoring_home_team
     assert_equal "Sabres", @league.lowest_scoring_home_team
   end
+
+  def test_it_returns_team_name_with_highest_win_percentage
+    assert_equal "Golden Knights", @league.winningest_team
+  end
+
+  def test_it_returns_team_name_with_best_fans
+    assert_equal "Coyotes", @league.best_fans
+  end
+
+  def test_it_returns_array_all_teams_with_better_away_records
+    assert_equal [], @league.worst_fans
+  end 
 end
 
-# winningest_team	Name of the team with the highest win percentage across all seasons.	String
-# best_fans	Name of the team with biggest difference between home and away win percentages.	String
 # worst_fans	List of names of all teams with better away records than home records.	Array
