@@ -6,6 +6,19 @@ class Team
     @team_stats = team_stats
   end
 
+  def team_info(team_id)
+    default = { "team_id"=>nil, "franchise_id"=>nil, "short_name"=>nil,
+               "team_name"=>nil, "abbreviation"=>nil,"link"=>nil}
+
+    @team_stats.inject({}) do |result, team|
+      values_as_strings = team.to_h.values.map { |val| val.to_s }
+
+      result = Hash[default.keys.zip(values_as_strings)] if team[:team_id] == team_id
+      result
+    end
+
+  end
+
   def best_season(team_id)
     summary = @game_stats.reduce({}) do |total, game|
       total[game[:season]] = {games_played: 0, games_won: 0} unless total[game[:season]]
@@ -169,8 +182,7 @@ class Team
         result[opponent_id] = {wins:0,games_played:0} unless result[opponent_id]
         result[opponent_id][:games_played] +=1
         result[opponent_id][:wins] += 1 if game[:outcome].include?("home")
-      elsif
-        game[:away_team_id] == team_id
+      elsif game[:away_team_id] == team_id
         opponent_id = game[:home_team_id]
         result[opponent_id]= {wins:0, games_played:0} unless result[opponent_id]
         result[opponent_id][:games_played] += 1
@@ -184,10 +196,9 @@ class Team
     end
     result3 = {}
     @team_stats.each do |team|
-      result3[team[:shortname]] = result2[team[:team_id]]
+      result3[team[:teamname]] = result2[team[:team_id]] if result2[team[:team_id]]
     end
     result3
- 
   end
 end
  

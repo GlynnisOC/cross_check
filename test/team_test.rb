@@ -16,6 +16,18 @@ class TeamTest < Minitest::Test
     assert_instance_of Team, team
   end
 
+  def test_it_returns_team_info
+    expected = {
+      "team_id" => "18",
+      "franchise_id" => "34",
+      "short_name" => "Nashville",
+      "team_name" => "Predators",
+      "abbreviation" => "NSH",
+      "link" => "/api/v1/teams/18"
+    }
+    assert_equal expected, team.team_info(18)
+  end
+
   def test_it_returns_best_season
     assert_equal 20142015, team.best_season(2)
   end
@@ -53,7 +65,37 @@ class TeamTest < Minitest::Test
   end
 
   def test_it_returns_head_to_head_stats
-    expected = {}
+    expected = {"Devils"=>0.5,       
+                "Flyers"=>0.5,
+                "Kings"=>0.61,
+                "Lightning"=>0.7,
+                "Bruins"=>0.5,
+                "Rangers"=>0.4,
+                "Penguins"=>0.31,
+                "Red Wings"=>0.29,
+                "Sharks"=>0.6,
+                "Canucks"=>0.5,
+                "Blackhawks"=>0.42,
+                "Senators"=>0.7,
+                "Canadiens"=>0.6,
+                "Wild"=>0.44,
+                "Capitals"=>0.7,
+                "Blues"=>0.47,
+                "Ducks"=>0.48,
+                "Coyotes"=>0.67,
+                "Islanders"=>0.4,
+                "Flames"=>0.44,
+                "Avalanche"=>0.63,
+                "Stars"=>0.52,
+                "Panthers"=>0.5,
+                "Maple Leafs"=>0.4,
+                "Blue Jackets"=>0.6,
+                "Jets"=>0.55,
+                "Golden Knights"=>0.33,
+                "Hurricanes"=>0.3,
+                "Sabres"=>0.7,
+                "Oilers"=>0.78}
     assert_equal expected, team.head_to_head(18)
   end
+
 end
