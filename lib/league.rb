@@ -188,10 +188,8 @@ class League
       result[team_id][:home_wins] += 1 if game[:hoa].include? "home" and game[:won].include? "TRUE"
       result[team_id][:away_wins] += 1 if game[:hoa].include? "away" and game[:won].include? "TRUE"
     end
-    team_id = result.find_all do |team, stats|
-      stats[:home_wins]/stats[:home].to_f - stats[:away_wins]/stats[:away].to_f
+    result.find_all do |team, stats|
+      stats[:away_wins] > stats[:home_wins]
     end
   end
-
 end
-# require 'pry'; binding.pry

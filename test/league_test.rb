@@ -74,7 +74,5 @@ class LeagueTest < Minitest::Test
 
   def test_it_returns_array_all_teams_with_better_away_records
     assert_equal [], @league.worst_fans
-  end 
+  end
 end
-
-# worst_fans	List of names of all teams with better away records than home records.	Array
