@@ -29,11 +29,11 @@ class SeasonTest < MiniTest::Test
     assert_instance_of Season, @season
   end
 
-  # def test_biggest_bust
-  #   skip
-  #   assert_equal "Team Name", @season.biggest_bust(20122013)
-  # end
-  #
+  def test_biggest_bust
+    assert_equal "Lightning", @season.biggest_bust(20132014)
+    assert_equal "Jets", @season.biggest_bust(20142015)
+  end
+
   # def test_biggest_surprise
   #   skip
   #   assert_equal "Team Name", @season.biggest_surprise("20122013")
@@ -68,9 +68,9 @@ class SeasonTest < MiniTest::Test
   #   assert_equal "Name of Team", @season.fewest_hits("20122013")
   # end
   #
-  def test_power_play_goal_percentage
-    assert_equal 0.22, @season.power_play_goal_percentage(20132014)
-    assert_equal 0.21, @season.power_play_goal_percentage(20142015)
-  end
+  # def test_power_play_goal_percentage
+  #   assert_equal 0.22, @season.power_play_goal_percentage(20132014)
+  #   assert_equal 0.21, @season.power_play_goal_percentage(20142015)
+  # end
 
 end
