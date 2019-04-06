@@ -2,26 +2,15 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require './lib/game'
 require './lib/league'
+require './lib/csv_util'
 require './lib/stat_tracker'
 
 class LeagueTest < Minitest::Test
+  include Util
+  attr_reader :league
 
   def setup
-    game_path = './data/game.csv'
-    team_path = './data/team_info.csv'
-    game_teams_path = './data/game_teams_stats.csv'
-
-
-
-    locations = {
-      games: game_path,
-      teams: team_path,
-
-      game_teams: game_teams_path
-    }
-
-    @stat_tracker = StatTracker.from_csv(locations)
-    @league = @stat_tracker.league
+    @league = StatTracker.from_csv(locations).league unless league
   end
 
   def test_it_exists

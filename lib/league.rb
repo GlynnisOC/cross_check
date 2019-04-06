@@ -13,10 +13,10 @@ class League
   def best_offense
     result = {}
     @game_teams_stats.each do |game|
-      id = game[:team_id]
-      result[id] = {games_played: 0, goals: 0} unless result[id]
-      result[id][:games_played]+=1
-      result[id][:goals] += game[:goals]
+      team_id = game[:team_id]
+      result[team_id] = {games_played: 0, goals: 0} unless result[team_id]
+      result[team_id][:games_played]+=1
+      result[team_id][:goals] += game[:goals]
     end
     team_id = result.max_by do |team_id, stats|
       (stats[:goals]/stats[:games_played].to_f).round(2)
@@ -29,10 +29,10 @@ class League
   def worst_offense
     result = {}
     @game_teams_stats.each do |game|
-      id = game[:team_id]
-      result[id] = {games_played: 0, goals: 0} unless result[id]
-      result[id][:games_played]+=1
-      result[id][:goals] += game[:goals]
+      team_id = game[:team_id]
+      result[team_id] = {games_played: 0, goals: 0} unless result[team_id]
+      result[team_id][:games_played]+=1
+      result[team_id][:goals] += game[:goals]
     end
     team_id = result.min_by do |team_id, stats|
       (stats[:goals]/stats[:games_played].to_f).round(2)
