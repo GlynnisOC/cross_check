@@ -1,0 +1,76 @@
+require 'minitest/autorun'
+require 'minitest/pride'
+require './lib/game'
+require './lib/season'
+require './lib/stat_tracker'
+require 'pry'
+
+class SeasonTest < MiniTest::Test
+  attr_reader :season
+
+  def setup
+    game_path = './data/game.csv'
+    team_path = './data/team_info.csv'
+    game_teams_path = './data/game_teams_stats.csv'
+
+
+
+    locations = {
+      games: game_path,
+      teams: team_path,
+      game_teams: game_teams_path
+    }
+
+    @season = StatTracker.from_csv(locations).season unless season
+
+  end
+
+  def test_season_exists
+    assert_instance_of Season, @season
+  end
+
+  def test_biggest_bust
+    skip
+    assert_equal "Team Name", @season.biggest_bust(20122013)
+  end
+
+  def test_biggest_surprise
+    skip
+    assert_equal "Team Name", @season.biggest_surprise("20122013")
+  end
+
+  def test_winningest_coach
+      assert_equal "Coach Name", season.winningest_coach(20122013)
+  end
+  #
+  # def test_worst_coach
+  #   skip
+  #   assert_equal "Coach Name", @season.worst_coach("20122013")
+  # end
+  #
+  # def test_most_accurate_team
+  #   skip
+  #   assert_equal "Name of Team", @season.most_accurate_team("20122013")
+  # end
+  #
+  # def test_least_accurate_team
+  #   skip
+  #   assert_equal "Name of Team", @season.least_accurate_team("20122013")
+  # end
+  #
+  # def test_most_hits
+  #   skip
+  #   assert_equal "Name of Team", @season.most_hits("20122013")
+  # end
+  #
+  # def test_fewest_hits
+  #   skip
+  #   assert_equal "Name of Team", @season.fewest_hits("20122013")
+  # end
+  #
+  # def test_power_play_goal_percentage
+  #   skip
+  #   assert_equal 5.5, @season.power_play_goal_percentage("20122013")
+  # end
+
+end
