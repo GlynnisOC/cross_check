@@ -200,5 +200,105 @@ class Team
     end
     result3
   end
+
+  def seasonal_summary(team_id)
+    default_value = {
+      win_percentage:0,
+      total_goals_scored:0,
+      total_goals_against:0,
+      average_goals_scored:0,
+      average_goals_against:0
+    }
+    result = {}
+    tally = {}
+
+    @game_stats.each do |game|
+      season = game[:season]
+      result[season] = {} unless result[season]
+      tally[season] = {post:0,regular:0} unless tally[season]
+
+      if game[:type] == "R"
+
+        if !result[season][:regular_season]
+          result[season][:regular_season] ={
+                                             win_percentage:0,
+                                             total_goals_scored:0,
+                                             total_goals_against:0,
+                                             average_goals_scored:0,
+                                             average_goals_against:0
+        }
+        end
+
+        if game[:home_team_id] == team_id
+            tally[season][:regular] += 1
+            reg_s =  result[season][:regular_season]
+            reg_s[:total_goals_scored] += game[:home_goals]
+            result[season][:regular_season][:total_goals_against] += game[:away_goals]
+            result[season][:regular_season][:win_percentage] += 1 if game[:outcome].include?("home")
+
+        elsif game[:away_team_id] == team_id
+          tally[season][:regular] += 1
+          reg_s =  result[season][:regular_season]
+          reg_s[:total_goals_scored] += game[:away_goals]
+          result[season][:regular_season][:total_goals_against] += game[:home_goals]
+          result[season][:regular_season][:win_percentage] += 1 if game[:outcome].include?("away")
+        end
+      else
+
+         if !result[season][:postseason]
+          result[season][:postseason] ={
+                                             win_percentage:0,
+                                             total_goals_scored:0,
+                                             total_goals_against:0,
+                                             average_goals_scored:0,
+                                             average_goals_against:0
+        }
+        end
+
+        if game[:home_team_id] == team_id
+            tally[season][:post] += 1
+            reg_s =  result[season][:postseason]
+            reg_s[:total_goals_scored] += game[:home_goals]
+            result[season][:postseason][:total_goals_against] += game[:away_goals]
+            result[season][:postseason][:win_percentage] += 1 if game[:outcome].include?("home")
+
+        elsif game[:away_team_id] == team_id
+          tally[season][:post] += 1
+          reg_s =  result[season][:postseason]
+          reg_s[:total_goals_scored] += game[:away_goals]
+          result[season][:postseason][:total_goals_against] += game[:home_goals]
+          result[season][:postseason][:win_percentage] += 1 if game[:outcome].include?("away")
+        end
+
+
+      end
+
+    end
+    
+    output = result.clone
+
+    result.each do |season_id, stats|
+      games = tally[season_id][:regular].to_f
+      pgames = tally[season_id][:post].to_f
+      output[season_id][:regular_season][:win_percentage] = (stats[:regular_season][:win_percentage]/games).round(2)
+      output[season_id][:regular_season][:average_goals_scored] = (stats[:regular_season][:total_goals_scored]/games).round(2)
+      output[season_id][:regular_season][:average_goals_against] = (stats[:regular_season][:total_goals_against]/games).round(2)
+      win_percentage =  (stats[:postseason][:win_percentage]/pgames).round(2)
+      average_goals_scored = (stats[:postseason][:total_goals_scored]/pgames).round(2)
+      average_goals_against =  (stats[:postseason][:total_goals_against]/pgames).round(2)
+
+      output[season_id][:postseason][:win_percentage] = (win_percentage.nan?) ? 0 : win_percentage
+      output[season_id][:postseason][:average_goals_scored] =  (average_goals_scored.nan?) ? 0 : average_goals_scored
+      output[season_id][:postseason][:average_goals_against] = (average_goals_against.nan?) ? 0 : average_goals_against
+
+    end
+
+    output.inject({}) do |acc, (k,v)|
+      acc[k.to_s] = v
+      acc
+      
+    end
+  end
+
 end
  
