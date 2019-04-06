@@ -2,9 +2,12 @@ require 'minitest/autorun'
 require 'minitest/pride'
 require './lib/game'
 require './lib/league'
+require './lib/csv_util'
 require './lib/stat_tracker'
 
 class LeagueTest < Minitest::Test
+  include Util
+  attr_reader :league
 
   def setup
     game_path = './data/game.csv'
