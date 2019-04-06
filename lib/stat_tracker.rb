@@ -29,4 +29,5 @@ class StatTracker
       @team = Team.new(@game_stats, @game_teams_stats, @teams_stats)
       StatTracker.new(@game, @season, @league, @team)
   end
+ 
 end
