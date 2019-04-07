@@ -29,15 +29,15 @@ class SeasonTest < MiniTest::Test
     assert_instance_of Season, @season
   end
 
-  def test_biggest_bust
-    assert_equal "Lightning", @season.biggest_bust(20132014)
-    assert_equal "Jets", @season.biggest_bust(20142015)
-  end
-
-  # def test_biggest_surprise
-  #   skip
-  #   assert_equal "Team Name", @season.biggest_surprise("20122013")
+  # def test_biggest_bust
+  #   assert_equal "Lightning", @season.biggest_bust(20132014)
+  #   assert_equal "Jets", @season.biggest_bust(20142015)
   # end
+
+  def test_biggest_surprise
+    assert_equal "Kings", @season.biggest_surprise(20132014)
+    assert_equal "Blackhawks", @season.biggest_surprise(20142015)
+  end
 
   # def test_winningest_coach
   #     assert_equal "Alain Vigneault", season.winningest_coach(20142015)

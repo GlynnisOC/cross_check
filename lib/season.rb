@@ -41,12 +41,37 @@ class Season
   end
 
   def biggest_surprise(season_id)
-    #get team wins & games played for regular season
-    #get team wins & games played for postseason
-    #find percentages and find biggest increase
-    # Name of the team with the biggest increase
-    # between regular season and postseason win
-    # percentage.	String
+    result = {}
+    reg_game_ids = []
+    post_game_ids = []
+
+    @game_stats.each do |game|
+      reg_game_ids << game[:game_id] if game[:season] == season_id && game[:type] == "R"
+      post_game_ids << game[:game_id] if game[:season] == season_id && game[:type] == "P"
+    end
+
+      @game_teams_stats.each do |game|
+        if reg_game_ids.include? game[:game_id]
+        result[game[:team_id]] = {reg_won: 0, reg_total_games: 0, post_won: 0, post_total_games: 0} unless result[game[:team_id]]
+        result[game[:team_id]][:reg_won] += 1  if game[:won].include?("TRUE")
+        result[game[:team_id]][:reg_total_games] += 1
+        end
+      end
+
+      @game_teams_stats.each do |game|
+        if post_game_ids.include? game[:game_id]
+        result[game[:team_id]] = {reg_won: 0, reg_total_games: 0, post_won: 0, post_total_games: 0} unless result[game[:team_id]]
+        result[game[:team_id]][:post_won] += 1  if game[:won].include?("TRUE")
+        result[game[:team_id]][:post_total_games] += 1
+        end
+      end
+      team_id = result.min_by do |team, stats|
+        possible_diff = ((stats[:reg_won] + stats[:post_won]).to_f / (stats[:reg_total_games] + stats[:post_total_games]).to_f)
+        (stats[:reg_won] / stats[:reg_total_games].to_f) - possible_diff
+      end
+      @team_stats.find do |game|
+        game[:team_id] == team_id.first
+      end[:teamname]
   end
 
   def winningest_coach(season_id)
