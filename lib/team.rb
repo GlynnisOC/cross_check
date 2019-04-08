@@ -202,13 +202,6 @@ class Team
   end
 
   def seasonal_summary(team_id)
-    default_value = {
-      win_percentage:0,
-      total_goals_scored:0,
-      total_goals_against:0,
-      average_goals_scored:0,
-      average_goals_against:0
-    }
     result = {}
     tally = {}
 
@@ -245,15 +238,15 @@ class Team
         end
       else
 
-         if !result[season][:postseason]
-          result[season][:postseason] ={
-                                             win_percentage:0,
-                                             total_goals_scored:0,
-                                             total_goals_against:0,
-                                             average_goals_scored:0,
-                                             average_goals_against:0
-        }
-        end
+     if !result[season][:postseason]
+      result[season][:postseason] ={
+                                         win_percentage:0,
+                                         total_goals_scored:0,
+                                         total_goals_against:0,
+                                         average_goals_scored:0,
+                                         average_goals_against:0
+                                       }
+     end
 
         if game[:home_team_id] == team_id
             tally[season][:post] += 1
@@ -274,7 +267,7 @@ class Team
       end
 
     end
-    
+
     output = result.clone
 
     result.each do |season_id, stats|
@@ -296,9 +289,8 @@ class Team
     output.inject({}) do |acc, (k,v)|
       acc[k.to_s] = v
       acc
-      
+
     end
   end
 
 end
- 
