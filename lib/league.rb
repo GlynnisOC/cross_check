@@ -13,10 +13,10 @@ class League
   def best_offense
     result = {}
     @game_teams_stats.each do |game|
-      id = game[:team_id]
-      result[id] = {games_played: 0, goals: 0} unless result[id]
-      result[id][:games_played]+=1
-      result[id][:goals] += game[:goals]
+      team_id = game[:team_id]
+      result[team_id] = {games_played: 0, goals: 0} unless result[team_id]
+      result[team_id][:games_played]+=1
+      result[team_id][:goals] += game[:goals]
     end
     team_id = result.max_by do |team_id, stats|
       (stats[:goals]/stats[:games_played].to_f).round(2)
@@ -29,10 +29,10 @@ class League
   def worst_offense
     result = {}
     @game_teams_stats.each do |game|
-      id = game[:team_id]
-      result[id] = {games_played: 0, goals: 0} unless result[id]
-      result[id][:games_played]+=1
-      result[id][:goals] += game[:goals]
+      team_id = game[:team_id]
+      result[team_id] = {games_played: 0, goals: 0} unless result[team_id]
+      result[team_id][:games_played]+=1
+      result[team_id][:goals] += game[:goals]
     end
     team_id = result.min_by do |team_id, stats|
       (stats[:goals]/stats[:games_played].to_f).round(2)
@@ -188,8 +188,11 @@ class League
       result[team_id][:home_wins] += 1 if game[:hoa].include? "home" and game[:won].include? "TRUE"
       result[team_id][:away_wins] += 1 if game[:hoa].include? "away" and game[:won].include? "TRUE"
     end
-    result.find_all do |team, stats|
+    array_of_team_ids = result.find_all do |team, stats|
       stats[:away_wins] > stats[:home_wins]
+    end
+    array_of_team_ids.find_all do |team_id|
+      team[:team_id] == team_id
     end
   end
 end
