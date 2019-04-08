@@ -62,7 +62,7 @@ class Game
       total_games += 1
       @total_goals += game[:away_goals] + game[:home_goals]
     end
-    @total_goals
+
     (@total_goals / total_games.to_f).round(3)
   end
 
@@ -81,12 +81,5 @@ class Game
     total_goals_per_season
 
   end
-# goal per season hash {20122013=>69, 20132014=>29, 20142015=>29,
-  # 20162017=>30, 20152016=>5}
+
 end
-
-#Create method for # of games in a season
-#would have to be able to pass in specific season
-
-#Create method for # of goals in a season
-#would have to be able to pass in specific season

@@ -69,7 +69,7 @@ class GameTest < Minitest::Test
       20132014=>7.25,
       20142015=>4.833,
       20162017=>6.0,
-      20152016=>5.5}
+      20152016=>5.0}
     assert_equal expected, @game.average_goals_by_season
   end
 end
