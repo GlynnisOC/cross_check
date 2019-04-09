@@ -1,10 +1,4 @@
-class Team
-
-  def initialize(game_stats, game_teams_stats, team_stats)
-    @game_stats= game_stats
-    @game_teams_stats = game_teams_stats
-    @team_stats = team_stats
-  end
+module Team
 
   def team_info(team_id)
     default = { "team_id"=>nil, "franchise_id"=>nil, "short_name"=>nil,
@@ -13,34 +7,32 @@ class Team
     @team_stats.inject({}) do |result, team|
       values_as_strings = team.to_h.values.map { |val| val.to_s }
 
-      result = Hash[default.keys.zip(values_as_strings)] if team[:team_id] == team_id
+      result = Hash[default.keys.zip(values_as_strings)] if team[:team_id].to_s == team_id
       result
     end
-
   end
 
   def best_season(team_id)
+    team_id = team_id.to_i
     summary = @game_stats.reduce({}) do |total, game|
       total[game[:season]] = {games_played: 0, games_won: 0} unless total[game[:season]]
-
       if game[:away_team_id] == team_id
         total[game[:season]][:games_played] += 1
         total[game[:season]][:games_won] += 1 if game[:outcome].include?("away")
       end
-
       if game[:home_team_id] == team_id
         total[game[:season]][:games_played] += 1
         total[game[:season]][:games_won] += 1 if game[:outcome].include?("home")
       end
-
       total
     end
     summary.max_by do |season, stats|
       (stats[:games_won].to_f / stats[:games_played]) * 100
-      end.first
+    end.first.to_s
   end
 
   def worst_season(team_id)
+    team_id = team_id.to_i
     summary = @game_stats.reduce({}) do |total, game|
       total[game[:season]] = {games_played: 0, games_won: 0} unless total[game[:season]]
 
@@ -58,10 +50,11 @@ class Team
     end
     summary.min_by do |season, stats|
       (stats[:games_won].to_f / stats[:games_played]) * 100
-    end.first
+    end.first.to_s
   end
 
   def average_win_percentage(team_id)
+    team_id = team_id.to_i
     num_games_played = 0
     num_games_won = 0
     @game_teams_stats.each do |game|
@@ -72,10 +65,11 @@ class Team
         end
       end
     end
-    ((num_games_won/num_games_played.to_f) * 100).round(2)
+    (num_games_won/num_games_played.to_f).round(2)
   end
 
   def most_goals_scored(team_id)
+    team_id = team_id.to_i
     @game_teams_stats.max_by do |game|
       if game[:team_id] == team_id
         game[:goals]
@@ -86,12 +80,14 @@ class Team
   end
 
   def fewest_goals_scored(team_id)
-    @game_teams_stats.min do |game|
+    team_id = team_id.to_i
+    @game_teams_stats.min_by do |game|
       (game[:team_id] == team_id) ? game[:goals] : Float::INFINITY
     end[:goals]
   end
 
   def favorite_opponent(team_id)
+    team_id = team_id.to_i
     opponents = {}
 
     @game_stats.each do |game|
@@ -114,11 +110,12 @@ class Team
       end
 
     end
-    fav_opp = opponents.max_by { |team, stats|  stats[:games_lost]/stats[:games_played]}.shift
+    fav_opp = opponents.max_by { |team, stats|  stats[:games_lost]/stats[:games_played].to_f }.shift
     @team_stats.find { |team| team[:team_id] == fav_opp }[:teamname]
   end
 
   def rival(team_id)
+    team_id = team_id.to_i
     opponents = {}
 
     @game_stats.each do |game|
@@ -142,11 +139,12 @@ class Team
       end
 
     end
-    fav_opp = opponents.min_by { |team, stats|  stats[:games_lost]/stats[:games_played]}.shift
+    fav_opp = opponents.min_by { |team, stats|  stats[:games_lost]/stats[:games_played].to_f }.shift
     @team_stats.find { |team| team[:team_id] == fav_opp }[:teamname]
   end
 
   def biggest_team_blowout(team_id)
+    team_id = team_id.to_i
     result = 0
     @game_stats.each do |game|
       if game[:home_team_id] == team_id && game[:outcome].include?("home")
@@ -161,6 +159,7 @@ class Team
   end
 
   def worst_loss(team_id)
+    team_id = team_id.to_i
     result = 0
     @game_stats.each do |game|
       if game[:home_team_id] == team_id && game[:outcome].include?("away")
@@ -175,6 +174,7 @@ class Team
   end
 
   def head_to_head(team_id)
+    team_id = team_id.to_i
     result = {}
     @game_stats.each do |game|
       if game[:home_team_id] == team_id
@@ -202,6 +202,7 @@ class Team
   end
 
   def seasonal_summary(team_id)
+    team_id = team_id.to_i
     result = {}
     tally = {}
 
@@ -209,9 +210,7 @@ class Team
       season = game[:season]
       result[season] = {} unless result[season]
       tally[season] = {post:0,regular:0} unless tally[season]
-
       if game[:type] == "R"
-
         if !result[season][:regular_season]
           result[season][:regular_season] ={
                                              win_percentage:0,
@@ -221,7 +220,6 @@ class Team
                                              average_goals_against:0
         }
         end
-
         if game[:home_team_id] == team_id
             tally[season][:regular] += 1
             reg_s =  result[season][:regular_season]
@@ -237,7 +235,6 @@ class Team
           result[season][:regular_season][:win_percentage] += 1 if game[:outcome].include?("away")
         end
       else
-
      if !result[season][:postseason]
       result[season][:postseason] ={
                                          win_percentage:0,
@@ -247,7 +244,6 @@ class Team
                                          average_goals_against:0
                                        }
      end
-
         if game[:home_team_id] == team_id
             tally[season][:post] += 1
             reg_s =  result[season][:postseason]
@@ -262,14 +258,9 @@ class Team
           result[season][:postseason][:total_goals_against] += game[:home_goals]
           result[season][:postseason][:win_percentage] += 1 if game[:outcome].include?("away")
         end
-
-
       end
-
     end
-
     output = result.clone
-
     result.each do |season_id, stats|
       games = tally[season_id][:regular].to_f
       pgames = tally[season_id][:post].to_f
@@ -279,18 +270,13 @@ class Team
       win_percentage =  (stats[:postseason][:win_percentage]/pgames).round(2)
       average_goals_scored = (stats[:postseason][:total_goals_scored]/pgames).round(2)
       average_goals_against =  (stats[:postseason][:total_goals_against]/pgames).round(2)
-
       output[season_id][:postseason][:win_percentage] = (win_percentage.nan?) ? 0 : win_percentage
       output[season_id][:postseason][:average_goals_scored] =  (average_goals_scored.nan?) ? 0 : average_goals_scored
       output[season_id][:postseason][:average_goals_against] = (average_goals_against.nan?) ? 0 : average_goals_against
-
     end
-
     output.inject({}) do |acc, (k,v)|
       acc[k.to_s] = v
       acc
-
     end
   end
-
 end

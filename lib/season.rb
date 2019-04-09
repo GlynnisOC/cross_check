@@ -1,12 +1,7 @@
-class Season
-
-  def initialize(game_stats, game_teams_stats, team_stats)
-    @game_stats= game_stats
-    @game_teams_stats = game_teams_stats
-    @team_stats = team_stats
-  end
+module Season
 
   def biggest_bust(season_id)
+    season_id = season_id.to_i
     result = {}
     reg_game_ids = []
     post_game_ids = []
@@ -41,6 +36,7 @@ class Season
   end
 
   def biggest_surprise(season_id)
+    season_id = season_id.to_i
     result = {}
     reg_game_ids = []
     post_game_ids = []
@@ -76,6 +72,7 @@ class Season
   end
 
   def winningest_coach(season_id)
+    season_id = season_id.to_i
     result = {}
     game_ids = []
 
@@ -97,6 +94,7 @@ class Season
   end
 
   def worst_coach(season_id)
+    season_id = season_id.to_i
     result = {}
     game_ids = []
 
@@ -118,6 +116,7 @@ class Season
   end
 
   def most_accurate_team(season_id)
+    season_id = season_id.to_i
     result = {}
     game_ids = []
 
@@ -145,6 +144,7 @@ class Season
   end
 
   def least_accurate_team(season_id)
+    season_id = season_id.to_i
     result = {}
     game_ids = []
 
@@ -222,6 +222,7 @@ class Season
   end
 
   def power_play_goal_percentage(season_id)
+    season_id = season_id.to_i
     result = {}
     game_ids = []
 
@@ -238,4 +239,8 @@ class Season
     end
     (result[:total][:powerplay_goals] / result[:total][:goals].to_f).round(2)
   end
+<<<<<<< Updated upstream
 end
+=======
+end
+>>>>>>> Stashed changes
