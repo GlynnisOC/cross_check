@@ -3,9 +3,11 @@ require_relative './game'
 require_relative './season'
 require_relative './league'
 require_relative './team'
+require_relative './csv_util.rb'
 # require_relative './helper_class'
 
 class StatTracker
+  include Util
   include Game
   include Season
   include Team
