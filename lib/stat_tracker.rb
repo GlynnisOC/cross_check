@@ -1,17 +1,9 @@
 require 'CSV'
-<<<<<<< Updated upstream
-require './lib/game'
-require './lib/season'
-require './lib/league'
-require './lib/team'
-
-=======
 require_relative './game'
 require_relative './season'
 require_relative './league'
 require_relative './team'
 # require_relative './helper_class'
->>>>>>> Stashed changes
 
 class StatTracker
   include Game
@@ -35,8 +27,5 @@ class StatTracker
 
       StatTracker.new(game_stats, team_stats, game_teams_stats)
   end
-<<<<<<< Updated upstream
- 
-=======
->>>>>>> Stashed changes
+
 end

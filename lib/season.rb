@@ -172,6 +172,7 @@ module Season
   end
 
   def most_hits(season)
+    season = season.to_i
     game_ids = {}
     teams_with_hits = {}
     @game_stats.each do |game|
@@ -197,6 +198,7 @@ module Season
   end
 
   def fewest_hits(season)
+    season = season.to_i
     game_ids = {}
     teams_with_hits = {}
     @game_stats.each do |game|
@@ -239,8 +241,4 @@ module Season
     end
     (result[:total][:powerplay_goals] / result[:total][:goals].to_f).round(2)
   end
-<<<<<<< Updated upstream
 end
-=======
-end
->>>>>>> Stashed changes
