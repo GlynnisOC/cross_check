@@ -12,8 +12,4 @@ module Util
     }
   end
 
-  def total_games_in_season(game_stats, season)
-    game_stats.find_all { |game| game[:season] == season }.count
-  end
-
 end

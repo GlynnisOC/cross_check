@@ -1,7 +1,6 @@
 require './test/test_helper'
 
 class TeamTest < Minitest::Test
-  include Util
 
   def setup
     @stat_tracker = StatTracker.from_csv(locations)

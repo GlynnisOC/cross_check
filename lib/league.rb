@@ -182,11 +182,15 @@ module League
       result[team_id][:home_wins] += 1 if game[:hoa].include? "home" and game[:won].include? "TRUE"
       result[team_id][:away_wins] += 1 if game[:hoa].include? "away" and game[:won].include? "TRUE"
     end
+
     array_of_team_ids = result.find_all do |team, stats|
       stats[:away_wins] > stats[:home_wins]
     end
-    array_of_team_ids.find_all do |team_id|
-      team[:team_id] == team_id
+
+    array_of_team_ids.map do |team_id|
+      found_team = @team_stats.select { |team| team[:team_id] == team_id }
+      found_team[:teamname]
     end
+
   end
 end

@@ -1,22 +1,22 @@
 module Game
 
   def highest_total_score
-    game = @game_stats.max_by do |game|
-      game[:home_goals] + game[:away_goals]
+    game = @game_stats.max_by do |inner_game|
+      inner_game[:home_goals] + inner_game[:away_goals]
     end
     game[:home_goals] + game[:away_goals]
   end
 
   def lowest_total_score
-    game = @game_stats.min_by do |game|
-      game[:home_goals] + game[:away_goals]
+    game = @game_stats.min_by do |inner_game|
+      inner_game[:home_goals] + inner_game[:away_goals]
     end
     game[:home_goals] + game[:away_goals]
   end
 
   def biggest_blowout
-    game = @game_stats.max_by do |game|
-      game[:home_goals] - game[:away_goals]
+    game = @game_stats.max_by do |inner_game|
+      inner_game[:home_goals] - inner_game[:away_goals]
     end
     game[:home_goals] - game[:away_goals]
   end
