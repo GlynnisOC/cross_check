@@ -5,107 +5,27 @@ module League
   end
 
   def best_offense
-    result = {}
-    @game_teams_stats.each do |game|
-      team_id = game[:team_id]
-      result[team_id] = {games_played: 0, goals: 0} unless result[team_id]
-      result[team_id][:games_played]+=1
-      result[team_id][:goals] += game[:goals]
-    end
-    team_id = result.max_by do |team_id, stats|
-      (stats[:goals]/stats[:games_played].to_f).round(2)
-    end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+   team_with_best_or_worst_offense(:max_by, @game_teams_stats)
   end
 
   def worst_offense
-    result = {}
-    @game_teams_stats.each do |game|
-      team_id = game[:team_id]
-      result[team_id] = {games_played: 0, goals: 0} unless result[team_id]
-      result[team_id][:games_played]+=1
-      result[team_id][:goals] += game[:goals]
-    end
-    team_id = result.min_by do |team_id, stats|
-      (stats[:goals]/stats[:games_played].to_f).round(2)
-    end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+   team_with_best_or_worst_offense(:min_by, @game_teams_stats)
   end
 
   def best_defense
-    result = {}
-    @game_stats.each do |game|
-      away_id = game[:away_team_id]
-      home_id = game[:home_team_id]
-      result[away_id] = {games_played: 0, goals: 0} unless result[away_id]
-      result[home_id] = {games_played: 0, goals: 0} unless result[home_id]
-      result[away_id][:games_played]+=1
-      result[home_id][:games_played]+=1
-      result[away_id][:goals]+= game[:home_goals]
-      result[home_id][:goals]+= game[:away_goals]
-    end
-    team_id = result.min_by do |team_id, stats|
-      (stats[:goals]/stats[:games_played].to_f).round(2)
-    end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+    team_with_best_or_worst_defense(:min_by, @game_stats)
   end
 
   def worst_defense
-    result = {}
-    @game_stats.each do |game|
-      away_id = game[:away_team_id]
-      home_id = game[:home_team_id]
-      result[away_id] = {games_played: 0, goals: 0} unless result[away_id]
-      result[home_id] = {games_played: 0, goals: 0} unless result[home_id]
-      result[away_id][:games_played]+=1
-      result[home_id][:games_played]+=1
-      result[away_id][:goals]+= game[:home_goals]
-      result[home_id][:goals]+= game[:away_goals]
-    end
-    team_id = result.max_by do |team_id, stats|
-      (stats[:goals]/stats[:games_played].to_f).round(2)
-    end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+    team_with_best_or_worst_defense(:max_by, @game_stats)
   end
 
   def highest_scoring_visitor
-    result = {}
-    @game_stats.each do |game|
-      away_id = game[:away_team_id]
-      result[away_id] = {games_played: 0, goals: 0} unless result[away_id]
-      result[away_id][:games_played]+=1
-      result[away_id][:goals]+= game[:away_goals]
-    end
-    team_id = result.max_by do |team_id, stats|
-      (stats[:goals]/stats[:games_played].to_f).round(2)
-    end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+    team_highest_score_home_or_away(:max_by, @game_stats, :away_team_id)
   end
 
   def highest_scoring_home_team
-    result = {}
-    @game_stats.each do |game|
-      home_id = game[:home_team_id]
-      result[home_id] = {games_played: 0, goals: 0} unless result[home_id]
-      result[home_id][:games_played]+=1
-      result[home_id][:goals]+= game[:home_goals]
-    end
-    team_id = result.max_by do |team_id, stats|
-      (stats[:goals]/stats[:games_played].to_f).round(2)
-    end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+    team_highest_score_home_or_away(:max_by, @game_stats, :home_team_id)
   end
 
   def lowest_scoring_visitor
@@ -119,9 +39,7 @@ module League
     team_id = result.min_by do |team_id, stats|
       (stats[:goals]/stats[:games_played].to_f).round(2)
     end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+   find_team_name(team_id)
   end
 
   def lowest_scoring_home_team
@@ -135,9 +53,7 @@ module League
     team_id = result.min_by do |team_id, stats|
       (stats[:goals]/stats[:games_played].to_f).round(2)
     end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+   find_team_name(team_id)
   end
 
   def winningest_team
@@ -151,9 +67,7 @@ module League
     team_id = result.max_by do |team_id, stats|
       (stats[:wins]/stats[:total_games].to_f).round(2)
     end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+   find_team_name(team_id)
   end
 
   def best_fans
@@ -168,9 +82,7 @@ module League
     team_id = result.max_by do |team, stats|
       stats[:home_wins]/stats[:home].to_f - stats[:away_wins]/stats[:away].to_f
     end.first
-    @team_stats.find do |team|
-      team[:team_id] == team_id
-    end[:teamname]
+   find_team_name(team_id)
   end
 
   def worst_fans

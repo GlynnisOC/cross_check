@@ -1,40 +1,23 @@
 module Game
 
   def highest_total_score
-    game = @game_stats.max_by do |inner_game|
-      inner_game[:home_goals] + inner_game[:away_goals]
-    end
-    game[:home_goals] + game[:away_goals]
+    goal_getter(:max_by, @game_stats, :+)
   end
 
   def lowest_total_score
-    game = @game_stats.min_by do |inner_game|
-      inner_game[:home_goals] + inner_game[:away_goals]
-    end
-    game[:home_goals] + game[:away_goals]
+    goal_getter(:min_by, @game_stats, :+)
   end
 
   def biggest_blowout
-    game = @game_stats.max_by do |inner_game|
-      inner_game[:home_goals] - inner_game[:away_goals]
-    end
-    game[:home_goals] - game[:away_goals]
+    goal_getter(:max_by, @game_stats, :-)
   end
 
   def percentage_home_wins
-    counter = 0
-    @game_stats.each do |game|
-      counter += 1 if game[:outcome].include?("home")
-    end
-    (counter.to_f / @game_stats.count).round(2)
+   game_percentage_wins("home")
   end
 
   def percentage_visitor_wins
-    counter = 0
-    @game_stats.each do |game|
-      counter += 1 if game[:outcome].include?("away")
-    end
-    (counter.to_f / @game_stats.count).round(2)
+    game_percentage_wins("away")
   end
 
   def count_of_games_by_season
