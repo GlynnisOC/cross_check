@@ -96,9 +96,19 @@ module Util
     end.first.to_s
   end
 
-  
+  def season_results(reg_or_postseason, result_season)
+    if !result_season[reg_or_postseason]
+      result_season[reg_or_postseason] ={
+                                         win_percentage:0,
+                                         total_goals_scored:0,
+                                         total_goals_against:0,
+                                         average_goals_scored:0,
+                                         average_goals_against:0
+    }
+    end
+  end
 
-  def accumulate_goals_in_season!(tally_season, result_season, game, home_or_away)
+  def accumulate_goals_in_regular_season!(tally_season, result_season, game, home_or_away)
     team_goals = ("home" == home_or_away) ? :home_goals  : :away_goals
     opponent_goals = ("home" != home_or_away) ? :home_goals  : :away_goals
     tally_season[:regular] += 1
@@ -107,6 +117,17 @@ module Util
     result_season[:regular_season][:total_goals_against] += game[opponent_goals]
     result_season[:regular_season][:win_percentage] += 1 if game[:outcome].include?(home_or_away)
   end
+
+  def accumulate_goals_in_postseason!(tally_season, result_season, game, home_or_away)
+    team_goals = ("home" == home_or_away) ? :home_goals  : :away_goals
+    opponent_goals = ("home" != home_or_away) ? :home_goals  : :away_goals
+    tally_season[:post] += 1
+    post_s =  result_season[:postseason]
+    post_s[:total_goals_scored] += game[team_goals]
+    result_season[:postseason][:total_goals_against] += game[opponent_goals]
+    result_season[:postseason][:win_percentage] += 1 if game[:outcome].include?(home_or_away)
+  end
+
 
 
 end

@@ -178,48 +178,18 @@ module Team
       result[season] = {} unless result[season]
       tally[season] = {post:0,regular:0} unless tally[season]
       if game[:type] == "R"
-        if !result[season][:regular_season]
-          result[season][:regular_season] ={
-                                             win_percentage:0,
-                                             total_goals_scored:0,
-                                             total_goals_against:0,
-                                             average_goals_scored:0,
-                                             average_goals_against:0
-        }
-        end
+        season_results(:regular_season, result[season])
         if game[:home_team_id] == team_id
-          accumulate_goals_in_season!(tally[season], result[season], game, "home")
+          accumulate_goals_in_regular_season!(tally[season], result[season], game, "home")
         elsif game[:away_team_id] == team_id
-          accumulate_goals_in_season!(tally[season], result[season], game, "away")
+          accumulate_goals_in_regular_season!(tally[season], result[season], game, "away")
         end
-
-
-
-
-
       else
-     if !result[season][:postseason]
-      result[season][:postseason] ={
-                                         win_percentage:0,
-                                         total_goals_scored:0,
-                                         total_goals_against:0,
-                                         average_goals_scored:0,
-                                         average_goals_against:0
-                                       }
-     end
+        season_results(:postseason, result[season])
         if game[:home_team_id] == team_id
-            tally[season][:post] += 1
-            reg_s =  result[season][:postseason]
-            reg_s[:total_goals_scored] += game[:home_goals]
-            result[season][:postseason][:total_goals_against] += game[:away_goals]
-            result[season][:postseason][:win_percentage] += 1 if game[:outcome].include?("home")
-
+          accumulate_goals_in_postseason!(tally[season], result[season], game, "home")
         elsif game[:away_team_id] == team_id
-          tally[season][:post] += 1
-          reg_s =  result[season][:postseason]
-          reg_s[:total_goals_scored] += game[:away_goals]
-          result[season][:postseason][:total_goals_against] += game[:home_goals]
-          result[season][:postseason][:win_percentage] += 1 if game[:outcome].include?("away")
+          accumulate_goals_in_postseason!(tally[season], result[season], game, "away")
         end
       end
     end
