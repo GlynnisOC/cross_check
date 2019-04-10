@@ -76,4 +76,37 @@ module Util
     team_id = find_team_id(result, min_or_max_by)
     find_team_name(team_id)
   end
+
+  def best_or_worst_season(team_id, max_by_or_min_by)
+    team_id = team_id.to_i
+    summary = @game_stats.reduce({}) do |total, game|
+      total[game[:season]] = {games_played: 0, games_won: 0} unless total[game[:season]]
+      if game[:away_team_id] == team_id
+        total[game[:season]][:games_played] += 1
+        total[game[:season]][:games_won] += 1 if game[:outcome].include?("away")
+      end
+      if game[:home_team_id] == team_id
+        total[game[:season]][:games_played] += 1
+        total[game[:season]][:games_won] += 1 if game[:outcome].include?("home")
+      end
+      total
+    end
+    summary.send(max_by_or_min_by) do |season, stats|
+      (stats[:games_won].to_f / stats[:games_played]) * 100
+    end.first.to_s
+  end
+
+  
+
+  def accumulate_goals_in_season!(tally_season, result_season, game, home_or_away)
+    team_goals = ("home" == home_or_away) ? :home_goals  : :away_goals
+    opponent_goals = ("home" != home_or_away) ? :home_goals  : :away_goals
+    tally_season[:regular] += 1
+    reg_s =  result_season[:regular_season]
+    reg_s[:total_goals_scored] += game[team_goals]
+    result_season[:regular_season][:total_goals_against] += game[opponent_goals]
+    result_season[:regular_season][:win_percentage] += 1 if game[:outcome].include?(home_or_away)
+  end
+
+
 end

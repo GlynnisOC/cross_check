@@ -13,44 +13,11 @@ module Team
   end
 
   def best_season(team_id)
-    team_id = team_id.to_i
-    summary = @game_stats.reduce({}) do |total, game|
-      total[game[:season]] = {games_played: 0, games_won: 0} unless total[game[:season]]
-      if game[:away_team_id] == team_id
-        total[game[:season]][:games_played] += 1
-        total[game[:season]][:games_won] += 1 if game[:outcome].include?("away")
-      end
-      if game[:home_team_id] == team_id
-        total[game[:season]][:games_played] += 1
-        total[game[:season]][:games_won] += 1 if game[:outcome].include?("home")
-      end
-      total
-    end
-    summary.max_by do |season, stats|
-      (stats[:games_won].to_f / stats[:games_played]) * 100
-    end.first.to_s
+    best_or_worst_season(team_id, :max_by)
   end
 
   def worst_season(team_id)
-    team_id = team_id.to_i
-    summary = @game_stats.reduce({}) do |total, game|
-      total[game[:season]] = {games_played: 0, games_won: 0} unless total[game[:season]]
-
-      if game[:away_team_id] == team_id
-        total[game[:season]][:games_played] += 1
-        total[game[:season]][:games_won] += 1 if game[:outcome].include?("away")
-      end
-
-      if game[:home_team_id] == team_id
-        total[game[:season]][:games_played] += 1
-        total[game[:season]][:games_won] += 1 if game[:outcome].include?("home")
-      end
-
-      total
-    end
-    summary.min_by do |season, stats|
-      (stats[:games_won].to_f / stats[:games_played]) * 100
-    end.first.to_s
+    best_or_worst_season(team_id, :min_by)
   end
 
   def average_win_percentage(team_id)
@@ -221,19 +188,15 @@ module Team
         }
         end
         if game[:home_team_id] == team_id
-            tally[season][:regular] += 1
-            reg_s =  result[season][:regular_season]
-            reg_s[:total_goals_scored] += game[:home_goals]
-            result[season][:regular_season][:total_goals_against] += game[:away_goals]
-            result[season][:regular_season][:win_percentage] += 1 if game[:outcome].include?("home")
-
+          accumulate_goals_in_season!(tally[season], result[season], game, "home")
         elsif game[:away_team_id] == team_id
-          tally[season][:regular] += 1
-          reg_s =  result[season][:regular_season]
-          reg_s[:total_goals_scored] += game[:away_goals]
-          result[season][:regular_season][:total_goals_against] += game[:home_goals]
-          result[season][:regular_season][:win_percentage] += 1 if game[:outcome].include?("away")
+          accumulate_goals_in_season!(tally[season], result[season], game, "away")
         end
+
+
+
+
+
       else
      if !result[season][:postseason]
       result[season][:postseason] ={
