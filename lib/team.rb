@@ -6,7 +6,6 @@ module Team
 
     @team_stats.inject({}) do |result, team|
       values_as_strings = team.to_h.values.map { |val| val.to_s }
-
       result = Hash[default.keys.zip(values_as_strings)] if team[:team_id].to_s == team_id
       result
     end
@@ -27,9 +26,7 @@ module Team
     @game_teams_stats.each do |game|
       if game[:team_id] == team_id
         num_games_played += 1
-        if game[:won].include? "TRUE"
-          num_games_won += 1
-        end
+        num_games_won += 1  if game[:won].include? "TRUE"
       end
     end
     (num_games_won/num_games_played.to_f).round(2)
@@ -38,18 +35,14 @@ module Team
   def most_goals_scored(team_id)
     team_id = team_id.to_i
     @game_teams_stats.max_by do |game|
-      if game[:team_id] == team_id
-        game[:goals]
-      else
-        0
-      end
+      (game[:team_id] == team_id) ? game[:goals] : 0
     end[:goals]
   end
 
   def fewest_goals_scored(team_id)
     team_id = team_id.to_i
     @game_teams_stats.min_by do |game|
-      (game[:team_id] == team_id) ? game[:goals] : Float::INFINITY
+      (game[:team_id] == team_id) ? game[:goals] : 1000000
     end[:goals]
   end
 
@@ -58,24 +51,8 @@ module Team
     opponents = {}
 
     @game_stats.each do |game|
-      if game[:away_team_id] == team_id
-        opponent_id = game[:home_team_id]
-        opponents[opponent_id] = {games_played:0, games_lost:0} if !opponents[opponent_id]
-        opponents[opponent_id][:games_played] += 1
-        if game[:outcome].include?("away")
-          opponents[opponent_id][:games_lost] +=1
-        end
-      end
-
-      if game[:home_team_id] == team_id
-        opponent_id = game[:away_team_id]
-        opponents[opponent_id] = {games_played:0, games_lost:0} if !opponents[opponent_id]
-        opponents[opponent_id][:games_played] += 1
-        if game[:outcome].include?("home")
-          opponents[opponent_id][:games_lost] +=1
-        end
-      end
-
+      opponent_hash("home", :home_team_id, :away_team_id, game, team_id, opponents)
+      opponent_hash("away", :away_team_id, :home_team_id, game, team_id, opponents)
     end
     fav_opp = opponents.max_by { |team, stats|  stats[:games_lost]/stats[:games_played].to_f }.shift
     @team_stats.find { |team| team[:team_id] == fav_opp }[:teamname]
@@ -86,58 +63,19 @@ module Team
     opponents = {}
 
     @game_stats.each do |game|
-      if game[:away_team_id] == team_id
-        opponent_id = game[:home_team_id]
-
-        opponents[opponent_id] = {games_played:0, games_lost:0} if !opponents[opponent_id]
-        opponents[opponent_id][:games_played] += 1
-        if game[:outcome].include?("away")
-          opponents[opponent_id][:games_lost] +=1
-        end
-      end
-
-      if game[:home_team_id] == team_id
-        opponent_id = game[:away_team_id]
-        opponents[opponent_id] = {games_played:0, games_lost:0} if !opponents[opponent_id]
-        opponents[opponent_id][:games_played] += 1
-        if game[:outcome].include?("home")
-          opponents[opponent_id][:games_lost] +=1
-        end
-      end
-
+      opponent_hash("away", :away_team_id, :home_team_id, game, team_id, opponents)
+      opponent_hash("home", :home_team_id, :away_team_id, game, team_id, opponents)
     end
     fav_opp = opponents.min_by { |team, stats|  stats[:games_lost]/stats[:games_played].to_f }.shift
     @team_stats.find { |team| team[:team_id] == fav_opp }[:teamname]
   end
 
   def biggest_team_blowout(team_id)
-    team_id = team_id.to_i
-    result = 0
-    @game_stats.each do |game|
-      if game[:home_team_id] == team_id && game[:outcome].include?("home")
-        difference = game[:home_goals] - game[:away_goals]
-        result = difference if difference > result
-      elsif game[:away_team_id] == team_id && game[:outcome].include?("away")
-        difference = game[:away_goals] - game[:home_goals]
-        result = difference if difference > result
-      end
-    end
-    result
+    biggest_difference_goals(team_id,:home_team_id,:away_team_id)
   end
 
   def worst_loss(team_id)
-    team_id = team_id.to_i
-    result = 0
-    @game_stats.each do |game|
-      if game[:home_team_id] == team_id && game[:outcome].include?("away")
-        difference = game[:away_goals] - game[:home_goals]
-        result = difference if difference > result
-      elsif game[:away_team_id] == team_id && game[:outcome].include?("home")
-        difference = game[:home_goals] - game[:away_goals]
-        result = difference if difference > result
-      end
-    end
-    result
+      biggest_difference_goals(team_id,:away_team_id,:home_team_id)
   end
 
   def head_to_head(team_id)
@@ -145,27 +83,18 @@ module Team
     result = {}
     @game_stats.each do |game|
       if game[:home_team_id] == team_id
-        opponent_id = game[:away_team_id]
-        result[opponent_id] = {wins:0,games_played:0} unless result[opponent_id]
-        result[opponent_id][:games_played] +=1
-        result[opponent_id][:wins] += 1 if game[:outcome].include?("home")
+        accumulate_games_and_wins(game,result,"home", :away_team_id)
       elsif game[:away_team_id] == team_id
-        opponent_id = game[:home_team_id]
-        result[opponent_id]= {wins:0, games_played:0} unless result[opponent_id]
-        result[opponent_id][:games_played] += 1
-        result[opponent_id][:wins] += 1 if game[:outcome].include?("away")
+        accumulate_games_and_wins(game, result, "away", :home_team_id)
       end
     end
 
-    result2 = {}
-    result.each do |team|
-      result2[team.first] = (team.last[:wins]/team.last[:games_played].to_f).round(2)
+    teams_as_hash = {}
+    result.each do |team_id, stats|
+      team_name = find_team_name(team_id)
+      teams_as_hash[team_name] = (stats[:wins]/stats[:games_played].to_f).round(2)
     end
-    result3 = {}
-    @team_stats.each do |team|
-      result3[team[:teamname]] = result2[team[:team_id]] if result2[team[:team_id]]
-    end
-    result3
+    teams_as_hash
   end
 
   def seasonal_summary(team_id)
