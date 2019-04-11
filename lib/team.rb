@@ -90,8 +90,8 @@ module Team
     end
 
     teams_as_hash = {}
-    result.each do |team_id, stats|
-      team_name = find_team_name(team_id)
+    result.each do |id, stats|
+      team_name = find_team_name(id)
       teams_as_hash[team_name] = (stats[:wins]/stats[:games_played].to_f).round(2)
     end
     teams_as_hash

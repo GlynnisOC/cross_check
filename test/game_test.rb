@@ -3,28 +3,26 @@ require './test/test_helper'
 class GameTest < Minitest::Test
   include Util
 
-  def setup
-    @stat_tracker = StatTracker.from_csv(locations)
-  end
+    @@stat_tracker = StatTracker.from_csv(Util.locations)
 
   def test_highest_total_score
-    assert_equal 15, @stat_tracker.highest_total_score
+    assert_equal 15, @@stat_tracker.highest_total_score
   end
 
   def test_lowest_total_score
-    assert_equal 1, @stat_tracker.lowest_total_score
+    assert_equal 1, @@stat_tracker.lowest_total_score
   end
 
   def test_it_returns_biggest_blowout
-    assert_equal 10, @stat_tracker.biggest_blowout
+    assert_equal 10, @@stat_tracker.biggest_blowout
   end
 
   def test_it_returns_percentage_home_wins
-    assert_equal 0.55, @stat_tracker.percentage_home_wins
+    assert_equal 0.55, @@stat_tracker.percentage_home_wins
   end
 
   def test_it_returns_percentage_visitor_wins
-    assert_equal 0.45, @stat_tracker.percentage_visitor_wins
+    assert_equal 0.45, @@stat_tracker.percentage_visitor_wins
   end
 
   def test_count_of_games_by_season
@@ -36,11 +34,11 @@ class GameTest < Minitest::Test
       "20132014"=>1323,
       "20172018"=>1355}
 
-    assert_equal expected, @stat_tracker.count_of_games_by_season
+    assert_equal expected, @@stat_tracker.count_of_games_by_season
   end
 
   def test_average_goals_per_game
-    assert_equal 5.54, @stat_tracker.average_goals_per_game
+    assert_equal 5.54, @@stat_tracker.average_goals_per_game
   end
 
   def test_average_goals_per_game_per_season
@@ -51,6 +49,6 @@ class GameTest < Minitest::Test
       "20152016"=>5.41,
       "20132014"=>5.5,
       "20172018"=>5.94}
-    assert_equal expected, @stat_tracker.average_goals_by_season
+    assert_equal expected, @@stat_tracker.average_goals_by_season
   end
 end

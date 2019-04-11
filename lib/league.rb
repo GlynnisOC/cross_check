@@ -36,7 +36,7 @@ module League
       result[away_id][:games_played]+=1
       result[away_id][:goals]+= game[:away_goals]
     end
-    team_id = result.min_by do |team_id, stats|
+    team_id = result.min_by do |id, stats|
       (stats[:goals]/stats[:games_played].to_f).round(2)
     end.first
    find_team_name(team_id)
@@ -50,7 +50,7 @@ module League
       result[home_id][:games_played]+=1
       result[home_id][:goals]+= game[:home_goals]
     end
-    team_id = result.min_by do |team_id, stats|
+    team_id = result.min_by do |id, stats|
       (stats[:goals]/stats[:games_played].to_f).round(2)
     end.first
    find_team_name(team_id)
@@ -64,7 +64,7 @@ module League
       result[team_id][:total_games]+=1
       result[team_id][:wins]+=1 if game[:won].include?("TRUE")
     end
-    team_id = result.max_by do |team_id, stats|
+    team_id = result.max_by do |id, stats|
       (stats[:wins]/stats[:total_games].to_f).round(2)
     end.first
    find_team_name(team_id)

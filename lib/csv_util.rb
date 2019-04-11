@@ -1,7 +1,7 @@
 module Util
 
   private
-  def locations
+  def self.locations
     game_path = './data/game.csv'
     team_path = './data/team_info.csv'
     game_teams_path = './data/game_teams_stats.csv'

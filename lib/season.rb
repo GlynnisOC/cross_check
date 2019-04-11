@@ -33,7 +33,7 @@ module Season
       end
     end
 
-    team_id = result.max_by do |team_id, stats|
+    team_id = result.max_by do |id, stats|
       stats[:goals]/stats[:shots].to_f
     end
 
@@ -61,7 +61,7 @@ module Season
       end
     end
 
-    team_id = result.min_by do |team_id, stats|
+    team_id = result.min_by do |id, stats|
       stats[:goals]/stats[:shots].to_f
     end
 
